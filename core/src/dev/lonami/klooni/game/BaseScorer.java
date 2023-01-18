@@ -38,6 +38,7 @@ public abstract class BaseScorer implements BinSerializable {
 
     final Label currentScoreLabel;
     final Label highScoreLabel;
+    final Label levelLAbel;
 
     final Texture cupTexture;
     final Rectangle cupArea;
@@ -61,11 +62,18 @@ public abstract class BaseScorer implements BinSerializable {
         labelStyle.font = game.skin.getFont("font");
 
         currentScoreLabel = new Label("0", labelStyle);
-        currentScoreLabel.setAlignment(Align.right);
+
 
         highScoreLabel = new Label(Integer.toString(highScore), labelStyle);
+        highScoreLabel.setAlignment(Align.right);
+//        highScoreLabel.setBounds(0,0);
+        levelLAbel = new Label("level "+(highScore/100+1),labelStyle);
+        levelLAbel.setAlignment(Align.center);
+        layout.updateTimeLeftLabel(levelLAbel);
+
 
         layout.update(this);
+
     }
 
     //endregion
@@ -132,7 +140,8 @@ public abstract class BaseScorer implements BinSerializable {
 
         currentScoreLabel.setColor(Klooni.theme.currentScore);
         currentScoreLabel.draw(batch, 1f);
-
+        levelLAbel.setColor(Klooni.theme.currentScore);
+        levelLAbel.draw(batch,1f);
         highScoreLabel.setColor(Klooni.theme.highScore);
         highScoreLabel.draw(batch, 1f);
     }

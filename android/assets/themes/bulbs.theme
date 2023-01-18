@@ -2,7 +2,7 @@
     "name": "Bulbs",
     "price": 100,
     "colors": {
-        "background": "101010ff",
+        "background": "221f35",
         "foreground": "ffffffc0",
         "buttons": [
             "ffb20bff",

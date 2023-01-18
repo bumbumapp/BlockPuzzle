@@ -67,19 +67,13 @@ public class MainMenuScreen extends InputListener implements Screen {
                         new GameScreen(MainMenuScreen.this.game, GameScreen.GAME_MODE_SCORE));
             }
         });
-        table.add(playButton).colspan(3).fill().space(16);
+        table.add(playButton).colspan(2).fill().space(32);
 
         table.row();
 
         // Star button (on GitHub)
-        final SoftButton starButton = new SoftButton(1, "star_texture");
-        starButton.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                Gdx.net.openURI("https://github.com/LonamiWebs/Klooni1010/stargazers");
-            }
-        });
-        table.add(starButton).space(16);
+
+
 
         // Time mode
         final SoftButton statsButton = new SoftButton(2, "stopwatch_texture");
@@ -90,7 +84,7 @@ public class MainMenuScreen extends InputListener implements Screen {
                         new GameScreen(MainMenuScreen.this.game, GameScreen.GAME_MODE_TIME));
             }
         });
-        table.add(statsButton).space(16);
+        table.add(statsButton).space(32);
 
         // Palette button (buy colors)
         final SoftButton paletteButton = new SoftButton(3, "palette_texture");
@@ -101,7 +95,7 @@ public class MainMenuScreen extends InputListener implements Screen {
                         MainMenuScreen.this.game, MainMenuScreen.this.game.getScreen()), false);
             }
         });
-        table.add(paletteButton).space(16);
+        table.add(paletteButton).space(32);
     }
 
     //endregion

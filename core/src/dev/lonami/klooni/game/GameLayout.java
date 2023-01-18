@@ -21,6 +21,7 @@ package dev.lonami.klooni.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 
 import dev.lonami.klooni.actors.Band;
 import dev.lonami.klooni.actors.ShopCard;
@@ -54,7 +55,7 @@ public class GameLayout {
 
         // Widths
         marginWidth = screenWidth * 0.05f;
-        availableWidth = screenWidth - marginWidth * 2f;
+        availableWidth = screenWidth - marginWidth * 1.2f;
 
         // Heights
         logoHeight = screenHeight * 0.10f;
@@ -90,13 +91,14 @@ public class GameLayout {
 
         scorer.highScoreLabel.setBounds(
                 area.x + area.width * 0.5f + cupSize * 0.5f, area.y,
-                area.width * 0.5f - cupSize * 0.5f, area.height);
+                area.width * 0.5f - cupSize * 0.55f, area.height);
     }
 
     // Special case, we want to position the label on top of the cup
     void updateTimeLeftLabel(Label timeLeftLabel) {
-        timeLeftLabel.setBounds(0, screenHeight - logoHeight, screenWidth, logoHeight);
+        timeLeftLabel.setBounds(0, screenHeight - logoHeight, screenWidth-20, logoHeight);
     }
+
 
     void update(Board board) {
         // We can't leave our area, so pick the minimum between available

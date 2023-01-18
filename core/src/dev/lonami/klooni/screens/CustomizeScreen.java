@@ -21,6 +21,7 @@ package dev.lonami.klooni.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -116,15 +117,17 @@ class CustomizeScreen implements Screen {
         optionsGroup.addActor(soundButton);
 
         // Toggle the current shop (themes or effects)
-        toggleShopButton = new SoftButton(2, "effects_texture");
+        toggleShopButton = new SoftButton(2, "palette_texture");
         toggleShopButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 showingEffectsShop = !showingEffectsShop;
-                if (showingEffectsShop) {
+                if (!showingEffectsShop) {
                     toggleShopButton.updateImage("palette_texture");
+
                 } else {
                     toggleShopButton.updateImage("effects_texture");
+
                 }
                 loadShop();
             }
@@ -147,25 +150,10 @@ class CustomizeScreen implements Screen {
         });
         optionsGroup.addActor(snapButton);
 
-        // Issues
-        final SoftButton issuesButton = new SoftButton(3, "issues_texture");
-        issuesButton.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                Gdx.net.openURI("https://github.com/LonamiWebs/Klooni1010/issues");
-            }
-        });
-        optionsGroup.addActor(issuesButton);
+
 
         // Website
-        final SoftButton webButton = new SoftButton(2, "web_texture");
-        webButton.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                Gdx.net.openURI("https://lonamiwebs.github.io");
-            }
-        });
-        optionsGroup.addActor(webButton);
+
 
         // Use the same height as the buttons (for instance, the back button)
         table.add(new ScrollPane(optionsGroup))
@@ -200,12 +188,13 @@ class CustomizeScreen implements Screen {
         shopGroup.clear();
 
         if (showingEffectsShop)
-            for (IEffectFactory effect : Klooni.EFFECTS)
-                addCard(new EffectCard(game, layout, effect));
-
-        else // showingThemesShop
             for (Theme theme : Theme.getThemes())
                 addCard(new ThemeCard(game, layout, theme));
+
+        else // showingThemesShop
+          for (IEffectFactory effect : Klooni.EFFECTS)
+            addCard(new EffectCard(game, layout, effect));
+
 
         // Scroll to the currently selected item
         table.layout();

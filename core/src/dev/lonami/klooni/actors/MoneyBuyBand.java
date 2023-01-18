@@ -198,7 +198,7 @@ public class MoneyBuyBand extends Table {
                 showCurrentMoney();
             }
         }
-        setColor(Klooni.theme.bandColor);
+        setColor(Klooni.theme.bandColor2);
         infoLabel.setColor(Klooni.theme.textColor);
         super.draw(batch, parentAlpha);
     }

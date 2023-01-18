@@ -2,7 +2,7 @@
   "name": "Autumn",
   "price": 50,
   "colors": {
-    "background": "f5e7cbff",
+    "background": "221f35",
     "foreground": "ffffffff",
     "buttons": [
       "99df08ff",

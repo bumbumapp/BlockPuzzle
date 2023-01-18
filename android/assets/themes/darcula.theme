@@ -2,7 +2,7 @@
     "name": "Darcula",
     "price": 25,
     "colors": {
-        "background": "282a36ff",
+        "background": "221f35",
         "foreground": "f8f8f2ff",
         "buttons": [
             "8be9fdff",

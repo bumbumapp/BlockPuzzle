@@ -20,12 +20,16 @@ package dev.lonami.klooni.game;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.TextArea;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.TimeUtils;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import dev.lonami.klooni.Klooni;
 import dev.lonami.klooni.serializer.BinSerializable;
@@ -51,7 +55,7 @@ public class TimeScorer extends BaseScorer implements BinSerializable {
 
     //region Static variables
 
-    private static final long START_TIME = 30 * 1000000000L;
+    private static final long START_TIME = 240 * 1000000000L;
 
     // 2 seconds every 10 points: (2/10)*10^9 to get the nanoseconds
     private static final double SCORE_TO_NANOS = 0.2e+09d;
@@ -68,10 +72,9 @@ public class TimeScorer extends BaseScorer implements BinSerializable {
 
         Label.LabelStyle labelStyle = new Label.LabelStyle();
         labelStyle.font = game.skin.getFont("font");
-        timeLeftLabel = new Label("", labelStyle);
-        timeLeftLabel.setAlignment(Align.center);
+        timeLeftLabel = new Label("",labelStyle);
+        timeLeftLabel.setAlignment(Align.right);
         layout.updateTimeLeftLabel(timeLeftLabel);
-
         startTime = TimeUtils.nanoTime();
         deadTime = startTime + START_TIME;
 
@@ -153,14 +156,22 @@ public class TimeScorer extends BaseScorer implements BinSerializable {
         super.draw(batch);
 
         int timeLeft = pausedTimeLeft < 0 ? getTimeLeft() : pausedTimeLeft;
+       // String text=String.valueOf(converttounixHour(timeLeft));
         timeLeftLabel.setText(Integer.toString(timeLeft));
         timeLeftLabel.setColor(Klooni.theme.currentScore);
-        timeLeftLabel.draw(batch, 1f);
+       timeLeftLabel.draw(batch, 1f);
     }
 
     //endregion
 
     //region Serialization
+    public static String converttounixHour(long dt) {
+        Date date=new Date(dt*1000);
+        SimpleDateFormat sdf =new SimpleDateFormat("mm ss");
+        String formatted=sdf.format(date);
+        return  formatted;
+
+    }
 
     @Override
     public void write(DataOutputStream out) throws IOException {
