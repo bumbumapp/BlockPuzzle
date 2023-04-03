@@ -20,13 +20,26 @@ package dev.lonami.klooni;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.widget.Toast;
 
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.reward.RewardItem;
+import com.google.android.gms.ads.reward.RewardedVideoAd;
+import com.google.android.gms.ads.reward.RewardedVideoAdListener;
+
 
 import java.lang.reflect.Method;
 
-public class AndroidLauncher extends AndroidApplication {
+import dev.lonami.klooni.actors.MoneyBuyBand;
+import dev.lonami.klooni.actors.ShopCard;
+
+public class AndroidLauncher extends AndroidApplication implements AdsController{
+    private InterstitialAd mInterstitialAd = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,6 +57,47 @@ public class AndroidLauncher extends AndroidApplication {
 
         final AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
         final AndroidShareChallenge shareChallenge = new AndroidShareChallenge(this);
-        initialize(new Klooni(shareChallenge), config);
+        initialize(new Klooni(shareChallenge, this), config);
+        loadInterstitial();
+        Timers.timer().start();
+
     }
+
+    private void loadInterstitial() {
+        mInterstitialAd = new InterstitialAd(this);
+        mInterstitialAd.setAdUnitId(getString(R.string.intersitial_id));
+        initializeAds();
+    }
+
+
+    @Override
+    public void initializeAds() {
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mInterstitialAd.loadAd(adRequest);
+    }
+
+    @Override
+    public void showAds() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (mInterstitialAd.isLoaded()) {
+                    mInterstitialAd.show();
+                    mInterstitialAd.setAdListener(new AdListener() {
+                        @Override
+                        public void onAdClosed() {
+                            loadInterstitial();
+                            Timers.timer().start();
+                            Klooni.TIMER_FINISHED=false;
+                            super.onAdClosed();
+                        }
+                    });
+                }
+            }
+        });
+
+    }
+
+
+
 }

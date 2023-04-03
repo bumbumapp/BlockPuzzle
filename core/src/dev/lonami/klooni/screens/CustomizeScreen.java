@@ -21,7 +21,6 @@ package dev.lonami.klooni.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -35,6 +34,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.SnapshotArray;
 
+import java.io.IOException;
+
+import dev.lonami.klooni.AdsController;
 import dev.lonami.klooni.Klooni;
 import dev.lonami.klooni.Theme;
 import dev.lonami.klooni.actors.EffectCard;
@@ -46,10 +48,9 @@ import dev.lonami.klooni.game.GameLayout;
 import dev.lonami.klooni.interfaces.IEffectFactory;
 
 // Screen where the user can customize the look and feel of the game
-class CustomizeScreen implements Screen {
+public class CustomizeScreen implements Screen {
 
     //region Members
-
     private final Klooni game;
     private final Stage stage;
 
@@ -77,10 +78,11 @@ class CustomizeScreen implements Screen {
     //endregion
 
     //region Constructor
-
-    CustomizeScreen(Klooni game, final Screen lastScreen) {
+    AdsController adsController;
+    CustomizeScreen(Klooni game, final Screen lastScreen, AdsController adsController) {
         this.game = game;
         this.lastScreen = lastScreen;
+        this.adsController =adsController;
         stage = new Stage();
 
         table = new Table();
@@ -99,6 +101,9 @@ class CustomizeScreen implements Screen {
             }
         });
         optionsGroup.addActor(backButton);
+
+//
+
 
         // Turn sound on/off
         final SoftButton soundButton = new SoftButton(
@@ -149,8 +154,22 @@ class CustomizeScreen implements Screen {
             }
         });
         optionsGroup.addActor(snapButton);
-
-
+        final SoftButton webButton = new SoftButton(2, "web_texture");
+        webButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                Gdx.net.openURI("https://github.com/LonamiWebs/Klooni1010/blob/master/LICENSE");
+            }
+        });
+        optionsGroup.addActor(webButton);
+        final SoftButton issuesButton = new SoftButton(3, "issues_texture");
+        issuesButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                Gdx.net.openURI("https://github.com/bumbumapp/BlockPuzzle");
+            }
+        });
+        optionsGroup.addActor(issuesButton);
 
         // Website
 

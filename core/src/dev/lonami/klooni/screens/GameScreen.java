@@ -17,6 +17,7 @@
 */
 package dev.lonami.klooni.screens;
 
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
@@ -26,10 +27,13 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
+import org.graalvm.compiler.debug.DebugOptions;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+import dev.lonami.klooni.AdsController;
 import dev.lonami.klooni.Klooni;
 import dev.lonami.klooni.game.BaseScorer;
 import dev.lonami.klooni.game.Board;
@@ -41,6 +45,7 @@ import dev.lonami.klooni.game.Scorer;
 import dev.lonami.klooni.game.TimeScorer;
 import dev.lonami.klooni.serializer.BinSerializable;
 import dev.lonami.klooni.serializer.BinSerializer;
+import jdk.internal.org.jline.utils.Log;
 
 // Main game screen. Here the board, piece holder and score are shown
 class GameScreen implements Screen, InputProcessor, BinSerializable {
@@ -88,14 +93,16 @@ class GameScreen implements Screen, InputProcessor, BinSerializable {
     //region Constructor
 
     // Load any previously saved file by default
-    GameScreen(final Klooni game, final int gameMode) {
-        this(game, gameMode, true);
+    AdsController adsController;
+    GameScreen(final Klooni game, final int gameMode,AdsController adsController) {
+        this(game, gameMode, true,adsController);
     }
 
-    GameScreen(final Klooni game, final int gameMode, final boolean loadSave) {
+    GameScreen(final Klooni game, final int gameMode, final boolean loadSave, AdsController adsController) {
         batch = new SpriteBatch();
         this.game = game;
         this.gameMode = gameMode;
+        this.adsController=adsController;
 
         final GameLayout layout = new GameLayout();
         switch (gameMode) {
@@ -111,9 +118,8 @@ class GameScreen implements Screen, InputProcessor, BinSerializable {
 
         board = new Board(layout, BOARD_SIZE);
         holder = new PieceHolder(layout, board, HOLDER_PIECE_COUNT, board.cellSize);
-        pauseMenu = new PauseMenuStage(layout, game, scorer, gameMode);
+        pauseMenu = new PauseMenuStage(layout, game, scorer, gameMode,adsController);
         bonusParticleHandler = new BonusParticleHandler(game);
-
         gameOverSound = Gdx.audio.newSound(Gdx.files.internal("sound/game_over.mp3"));
 
         if (gameMode == GAME_MODE_SCORE) {
@@ -143,19 +149,24 @@ class GameScreen implements Screen, InputProcessor, BinSerializable {
     }
 
     private void doGameOver(final String gameOverReason) {
-        if (!gameOverDone) {
-            gameOverDone = true;
-
-            saveMoney();
-            holder.enabled = false;
-            pauseMenu.showGameOver(gameOverReason, scorer instanceof TimeScorer);
-            if (Klooni.soundsEnabled())
-                gameOverSound.play();
-
-            // The user should not be able to return to the game if its game over
-            if (gameMode == GAME_MODE_SCORE)
-                deleteSave();
+        if (Klooni.TIMER_FINISHED){
+            adsController.showAds();
         }
+            if (!gameOverDone) {
+                gameOverDone = true;
+                saveMoney();
+                holder.enabled = false;
+                pauseMenu.showGameOver(gameOverReason, scorer instanceof TimeScorer);
+                if (Klooni.soundsEnabled())
+                    gameOverSound.play();
+
+                // The user should not be able to return to the game if its game over
+                if (gameMode == GAME_MODE_SCORE)
+                    deleteSave();
+            }
+
+
+
     }
 
     //endregion
@@ -371,5 +382,5 @@ class GameScreen implements Screen, InputProcessor, BinSerializable {
         scorer.read(in);
     }
 
-    //endregion
+
 }

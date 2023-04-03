@@ -27,6 +27,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 
+import dev.lonami.klooni.AdsController;
 import dev.lonami.klooni.Klooni;
 import dev.lonami.klooni.actors.SoftButton;
 
@@ -46,12 +47,12 @@ public class MainMenuScreen extends InputListener implements Screen {
     private static final float minDelta = 1 / 30f;
 
     //endregion
-
+    AdsController adsController;
     //region Constructor
 
-    public MainMenuScreen(Klooni game) {
+    public MainMenuScreen(Klooni game, final AdsController adsController) {
         this.game = game;
-
+        this.adsController=adsController;
         stage = new Stage();
 
         Table table = new Table();
@@ -64,7 +65,7 @@ public class MainMenuScreen extends InputListener implements Screen {
         playButton.addListener(new ChangeListener() {
             public void changed(ChangeEvent event, Actor actor) {
                 MainMenuScreen.this.game.transitionTo(
-                        new GameScreen(MainMenuScreen.this.game, GameScreen.GAME_MODE_SCORE));
+                        new GameScreen(MainMenuScreen.this.game, GameScreen.GAME_MODE_SCORE,adsController));
             }
         });
         table.add(playButton).colspan(2).fill().space(32);
@@ -81,7 +82,7 @@ public class MainMenuScreen extends InputListener implements Screen {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 MainMenuScreen.this.game.transitionTo(
-                        new GameScreen(MainMenuScreen.this.game, GameScreen.GAME_MODE_TIME));
+                        new GameScreen(MainMenuScreen.this.game, GameScreen.GAME_MODE_TIME,adsController));
             }
         });
         table.add(statsButton).space(32);
@@ -92,7 +93,7 @@ public class MainMenuScreen extends InputListener implements Screen {
             public void changed(ChangeEvent event, Actor actor) {
                 // Don't dispose because then it needs to take us to the previous screen
                 MainMenuScreen.this.game.transitionTo(new CustomizeScreen(
-                        MainMenuScreen.this.game, MainMenuScreen.this.game.getScreen()), false);
+                        MainMenuScreen.this.game, MainMenuScreen.this.game.getScreen(),adsController), false);
             }
         });
         table.add(paletteButton).space(32);

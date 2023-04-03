@@ -31,6 +31,7 @@ import com.badlogic.gdx.scenes.scene2d.actions.RunnableAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 
+import dev.lonami.klooni.AdsController;
 import dev.lonami.klooni.Klooni;
 import dev.lonami.klooni.actors.Band;
 import dev.lonami.klooni.actors.SoftButton;
@@ -58,11 +59,12 @@ class PauseMenuStage extends Stage {
     //endregion
 
     //region Constructor
-
+    AdsController adsController;
     // We need the score to save the maximum score if a new record was beaten
-    PauseMenuStage(final GameLayout layout, final Klooni game, final BaseScorer scorer, final int gameMode) {
+    PauseMenuStage(final GameLayout layout, final Klooni game, final BaseScorer scorer, final int gameMode, final AdsController adsController) {
         this.game = game;
         this.scorer = scorer;
+        this.adsController=adsController;
 
         shapeRenderer = new ShapeRenderer(20); // 20 vertex seems to be enough for a rectangle
 
@@ -81,7 +83,7 @@ class PauseMenuStage extends Stage {
 
         homeButton.addListener(new ChangeListener() {
             public void changed(ChangeEvent event, Actor actor) {
-                game.transitionTo(new MainMenuScreen(game));
+                game.transitionTo(new MainMenuScreen(game,adsController));
             }
         });
 
@@ -93,7 +95,7 @@ class PauseMenuStage extends Stage {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 // false, don't load the saved game state; we do want to replay
-                game.transitionTo(new GameScreen(game, gameMode, false));
+                game.transitionTo(new GameScreen(game, gameMode, false,adsController));
             }
         });
 
@@ -136,7 +138,7 @@ class PauseMenuStage extends Stage {
         @Override
         public void changed(ChangeEvent event, Actor actor) {
             // Don't dispose because then it needs to take us to the previous screen
-            game.transitionTo(new CustomizeScreen(game, game.getScreen()), false);
+            game.transitionTo(new CustomizeScreen(game, game.getScreen(), adsController), false);
         }
     };
 

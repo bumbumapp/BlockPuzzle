@@ -40,12 +40,14 @@ import dev.lonami.klooni.screens.MainMenuScreen;
 import dev.lonami.klooni.screens.TransitionScreen;
 
 public class Klooni extends Game {
-
+    public static boolean TIMER_FINISHED=false;
     //region Members
 
     // FIXME theme should NOT be static as it might load textures which will expose it to the race condition iff GDX got initialized before or not
     public static Theme theme;
+
     public IEffectFactory effect;
+    AdsController adsController;
 
     // ordered list of effects. index 0 will get default if VanishEffectFactory is removed from list
     public final static IEffectFactory[] EFFECTS = {
@@ -74,8 +76,9 @@ public class Klooni extends Game {
 
     // TODO Possibly implement a 'ShareChallenge'
     //      for other platforms instead passing null
-    public Klooni(final ShareChallenge shareChallenge) {
+    public Klooni(final ShareChallenge shareChallenge,AdsController adsController) {
         this.shareChallenge = shareChallenge;
+        this.adsController=adsController;
     }
 
     @Override
@@ -95,7 +98,7 @@ public class Klooni extends Game {
             theme = Theme.getTheme("default");
 
         Gdx.input.setCatchBackKey(true); // To show the pause menu
-        setScreen(new MainMenuScreen(this));
+        setScreen(new MainMenuScreen(this,adsController));
         String effectName = prefs.getString("effectName", "vanish");
         effectSounds = new HashMap<String, Sound>(EFFECTS.length);
         effect = EFFECTS[0];

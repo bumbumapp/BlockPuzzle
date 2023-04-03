@@ -2,5 +2,6 @@
 <resources>
 
     <string name="app_name">Block puzzle pro</string>
-
+   <string name="admob_id">ca-app-pub-8444865753152507~4403739662</string>
+   <string name="intersitial_id">ca-app-pub-8444865753152507/5907311453</string>
 </resources>

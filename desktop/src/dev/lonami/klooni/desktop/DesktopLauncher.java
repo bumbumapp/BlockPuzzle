@@ -32,6 +32,6 @@ class DesktopLauncher {
         config.addIcon("ic_launcher/icon128.png", Files.FileType.Internal);
         config.addIcon("ic_launcher/icon32.png", Files.FileType.Internal);
         config.addIcon("ic_launcher/icon16.png", Files.FileType.Internal);
-        new LwjglApplication(new Klooni(null), config);
+        new LwjglApplication(new Klooni(null,null), config);
     }
 }

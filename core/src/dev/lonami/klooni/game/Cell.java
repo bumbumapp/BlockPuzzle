@@ -66,6 +66,7 @@ public class Cell implements BinSerializable {
         draw(Klooni.theme.getCellColor(colorIndex), batch, pos.x, pos.y, size);
     }
 
+
     public Color getColorCopy() {
         return Klooni.theme.getCellColor(colorIndex).cpy();
     }
