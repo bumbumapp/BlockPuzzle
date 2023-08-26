@@ -17,33 +17,33 @@
 */
 package dev.lonami.klooni;
 
+import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
-import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
-import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.InterstitialAd;
-import com.google.android.gms.ads.MobileAds;
-import com.google.android.gms.ads.reward.RewardItem;
-import com.google.android.gms.ads.reward.RewardedVideoAd;
-import com.google.android.gms.ads.reward.RewardedVideoAdListener;
+import com.google.android.gms.ads.FullScreenContentCallback;
+import com.google.android.gms.ads.LoadAdError;
+import com.google.android.gms.ads.interstitial.InterstitialAd;
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 
 import java.lang.reflect.Method;
 
-import dev.lonami.klooni.actors.MoneyBuyBand;
-import dev.lonami.klooni.actors.ShopCard;
+
 
 public class AndroidLauncher extends AndroidApplication implements AdsController{
     private InterstitialAd mInterstitialAd = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true);
         // FIXME: Hack to allow us use the old way to share files
         // https://stackoverflow.com/a/42437379/
         if (Build.VERSION.SDK_INT >= 24) {
@@ -59,21 +59,29 @@ public class AndroidLauncher extends AndroidApplication implements AdsController
         final AndroidShareChallenge shareChallenge = new AndroidShareChallenge(this);
         initialize(new Klooni(shareChallenge, this), config);
         loadInterstitial();
-        Timers.timer().start();
-
     }
 
     private void loadInterstitial() {
-        mInterstitialAd = new InterstitialAd(this);
-        mInterstitialAd.setAdUnitId(getString(R.string.intersitial_id));
-        initializeAds();
+        AdRequest adRequest = new AdRequest.Builder().build();
+
+        InterstitialAd.load(this, getString(R.string.intersitial_id), adRequest, new InterstitialAdLoadCallback() {
+            @Override
+            public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
+                mInterstitialAd = interstitialAd;
+            }
+
+            @Override
+            public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+                mInterstitialAd = null;
+            }
+        });
+
     }
 
 
     @Override
     public void initializeAds() {
-        AdRequest adRequest = new AdRequest.Builder().build();
-        mInterstitialAd.loadAd(adRequest);
+        loadInterstitial();
     }
 
     @Override
@@ -81,17 +89,18 @@ public class AndroidLauncher extends AndroidApplication implements AdsController
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (mInterstitialAd.isLoaded()) {
-                    mInterstitialAd.show();
-                    mInterstitialAd.setAdListener(new AdListener() {
+                if (mInterstitialAd != null) {
+                    mInterstitialAd.show(AndroidLauncher.this);
+                    mInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback() {
                         @Override
-                        public void onAdClosed() {
+                        public void onAdShowedFullScreenContent() {
                             loadInterstitial();
                             Timers.timer().start();
                             Klooni.TIMER_FINISHED=false;
-                            super.onAdClosed();
+                            super.onAdShowedFullScreenContent();
                         }
                     });
+
                 }
             }
         });

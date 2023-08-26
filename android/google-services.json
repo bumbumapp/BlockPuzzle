@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "767216368398",
+    "project_id": "block-puzzle-bf9b4",
+    "storage_bucket": "block-puzzle-bf9b4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:767216368398:android:230c65efc990fd76fd355f",
+        "android_client_info": {
+          "package_name": "com.bumbumapps.blockpuzzlepro"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "767216368398-2gm3hrrj8cqr8q5iadrjdg6af3k5c4na.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDanohaZ-r0ICgLUVqm3-A4BfKnkG3eMJ4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "767216368398-2gm3hrrj8cqr8q5iadrjdg6af3k5c4na.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

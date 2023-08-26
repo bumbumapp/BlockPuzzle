@@ -1,6 +1,8 @@
+apply plugin: 'com.google.firebase.crashlytics'
+apply plugin: 'com.google.gms.google-services'
 android {
     buildToolsVersion "29.0.3"
-    compileSdkVersion 31
+    compileSdkVersion 33
     sourceSets {
         main {
             manifest.srcFile 'AndroidManifest.xml'
@@ -20,9 +22,9 @@ android {
         applicationId "com.bumbumapps.blockpuzzlepro"
         //noinspection MinSdkTooLow
         minSdkVersion 21
-        targetSdkVersion 31
-        versionCode 3
-        versionName "1.1.1"
+        targetSdkVersion 33
+        versionCode 6
+        versionName "1.2.3"
     }
     buildTypes {
         release {
@@ -30,11 +32,19 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 
 }
 
 dependencies{
-    implementation 'com.google.android.gms:play-services-ads:19.2.0'
+    implementation 'com.google.android.gms:play-services-ads:20.5.0'
+    implementation platform('com.google.firebase:firebase-bom:26.1.0')
+    // Declare the dependencies for the Crashlytics and Analytics libraries
+    // When using the BoM, you don't specify versions in Firebase library dependencies
+    implementation 'com.google.firebase:firebase-crashlytics'
 }
 // called every time gradle gets executed, takes the native dependencies of
 // the natives configuration, and extracts them to the proper libs/ folders

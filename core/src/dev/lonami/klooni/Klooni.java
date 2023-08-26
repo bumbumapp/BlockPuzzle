@@ -40,7 +40,7 @@ import dev.lonami.klooni.screens.MainMenuScreen;
 import dev.lonami.klooni.screens.TransitionScreen;
 
 public class Klooni extends Game {
-    public static boolean TIMER_FINISHED=false;
+    public static boolean TIMER_FINISHED=true;
     //region Members
 
     // FIXME theme should NOT be static as it might load textures which will expose it to the race condition iff GDX got initialized before or not

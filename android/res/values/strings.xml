@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Block puzzle pro</string>
+    <string name="app_name">Block puzzle</string>
    <string name="admob_id">ca-app-pub-8444865753152507~4403739662</string>
    <string name="intersitial_id">ca-app-pub-8444865753152507/5907311453</string>
 </resources>
