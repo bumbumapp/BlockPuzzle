@@ -17,96 +17,47 @@
 */
 package dev.lonami.klooni;
 
-import android.app.Activity;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.StrictMode;
-
-import androidx.annotation.NonNull;
 
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.FullScreenContentCallback;
-import com.google.android.gms.ads.LoadAdError;
-import com.google.android.gms.ads.interstitial.InterstitialAd;
-import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
+public class AndroidLauncher extends AndroidApplication implements AdsController {
 
-import java.lang.reflect.Method;
-
-
-
-public class AndroidLauncher extends AndroidApplication implements AdsController{
-    private InterstitialAd mInterstitialAd = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true);
-        // FIXME: Hack to allow us use the old way to share files
-        // https://stackoverflow.com/a/42437379/
-        if (Build.VERSION.SDK_INT >= 24) {
-            try {
-                Method m = StrictMode.class.getMethod("disableDeathOnFileUriExposure");
-                m.invoke(null);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
 
         final AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
+        // Hide the system bars so the game is not drawn under them (Android 15+ edge-to-edge).
+        config.useImmersiveMode = true;
         final AndroidShareChallenge shareChallenge = new AndroidShareChallenge(this);
         initialize(new Klooni(shareChallenge, this), config);
-        loadInterstitial();
+
+        // UMP consent first; ads are initialised and preloaded only when allowed.
+        AdsConsent.gather(this, () -> InterstitialHelper.preload(this));
     }
-
-    private void loadInterstitial() {
-        AdRequest adRequest = new AdRequest.Builder().build();
-
-        InterstitialAd.load(this, getString(R.string.intersitial_id), adRequest, new InterstitialAdLoadCallback() {
-            @Override
-            public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
-                mInterstitialAd = interstitialAd;
-            }
-
-            @Override
-            public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
-                mInterstitialAd = null;
-            }
-        });
-
-    }
-
 
     @Override
     public void initializeAds() {
-        loadInterstitial();
+        runOnUiThread(() -> InterstitialHelper.preload(this));
+    }
+
+    /** Called by the game on game over (a natural break point); capped to one ad per 60 s. */
+    @Override
+    public void showAds() {
+        runOnUiThread(() -> InterstitialHelper.showIfReady(this, null));
     }
 
     @Override
-    public void showAds() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (mInterstitialAd != null) {
-                    mInterstitialAd.show(AndroidLauncher.this);
-                    mInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback() {
-                        @Override
-                        public void onAdShowedFullScreenContent() {
-                            loadInterstitial();
-                            Timers.timer().start();
-                            Klooni.TIMER_FINISHED=false;
-                            super.onAdShowedFullScreenContent();
-                        }
-                    });
-
-                }
-            }
-        });
-
+    public boolean isPrivacyOptionsRequired() {
+        return AdsConsent.isPrivacyOptionsRequired(this);
     }
 
-
-
+    @Override
+    public void showPrivacyOptions() {
+        runOnUiThread(() -> AdsConsent.showPrivacyOptions(this));
+    }
 }
