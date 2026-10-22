@@ -18,11 +18,15 @@
 package dev.lonami.klooni;
 
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Handler;
+import android.os.Looper;
 import android.widget.Toast;
+
+import androidx.core.content.FileProvider;
 
 import java.io.File;
 
@@ -32,7 +36,7 @@ class AndroidShareChallenge extends ShareChallenge {
     private final Context context;
 
     AndroidShareChallenge(final Context context) {
-        handler = new Handler();
+        handler = new Handler(Looper.getMainLooper());
         this.context = context;
     }
 
@@ -51,8 +55,15 @@ class AndroidShareChallenge extends ShareChallenge {
                     return;
                 }
 
-                final String text = "Check out my score at 1010 Klooni!";
-                final Uri pictureUri = Uri.fromFile(getShareImageFilePath());
+                final String text = "Check out my score at Block puzzle!";
+                final Uri pictureUri;
+                try {
+                    pictureUri = FileProvider.getUriForFile(context,
+                            context.getPackageName() + ".fileprovider", getShareImageFilePath());
+                } catch (IllegalArgumentException e) {
+                    Toast.makeText(context, "Failed to share the file", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 final Intent shareIntent = new Intent();
                 shareIntent.setAction(Intent.ACTION_SEND);
                 shareIntent.setType("image/png");
@@ -60,8 +71,13 @@ class AndroidShareChallenge extends ShareChallenge {
                 shareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "");
                 shareIntent.putExtra(Intent.EXTRA_TEXT, text);
                 shareIntent.putExtra(Intent.EXTRA_STREAM, pictureUri);
+                shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
-                context.startActivity(Intent.createChooser(shareIntent, "Challenge your friends..."));
+                try {
+                    context.startActivity(Intent.createChooser(shareIntent, "Challenge your friends..."));
+                } catch (ActivityNotFoundException e) {
+                    Toast.makeText(context, "No app available to share", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }

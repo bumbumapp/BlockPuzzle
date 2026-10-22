@@ -20,6 +20,7 @@ package dev.lonami.klooni;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Sound;
@@ -97,7 +98,7 @@ public class Klooni extends Game {
         else
             theme = Theme.getTheme("default");
 
-        Gdx.input.setCatchBackKey(true); // To show the pause menu
+        Gdx.input.setCatchKey(Input.Keys.BACK, true); // To show the pause menu
         setScreen(new MainMenuScreen(this,adsController));
         String effectName = prefs.getString("effectName", "vanish");
         effectSounds = new HashMap<String, Sound>(EFFECTS.length);

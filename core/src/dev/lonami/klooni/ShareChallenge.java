@@ -52,9 +52,12 @@ public abstract class ShareChallenge {
 
         final FileHandle output = new FileHandle(saveAt);
 
-        final Texture shareBase = new Texture(Gdx.files.internal("share.png"));
-        final int width = shareBase.getWidth();
-        final int height = shareBase.getHeight();
+        // The branded share.png base image was removed from the assets; fall back to a plain
+        // background with the game title instead of crashing (GdxRuntimeException).
+        final FileHandle baseFile = Gdx.files.internal("share.png");
+        final Texture shareBase = baseFile.exists() ? new Texture(baseFile) : null;
+        final int width = shareBase != null ? shareBase.getWidth() : 1000;
+        final int height = shareBase != null ? shareBase.getHeight() : 618;
 
         final FrameBuffer frameBuffer = new FrameBuffer(Pixmap.Format.RGB888, width, height, false);
         frameBuffer.begin();
@@ -69,11 +72,20 @@ public abstract class ShareChallenge {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         batch.begin();
-        batch.draw(shareBase, 0, 0);
+        if (shareBase != null)
+            batch.draw(shareBase, 0, 0);
 
         // Render the achieved score
         final Label.LabelStyle style = new Label.LabelStyle();
         style.font = new BitmapFont(Gdx.files.internal("font/x1.0/geosans-light64.fnt"));
+        if (shareBase == null) {
+            Label title = new Label("Block puzzle", style);
+            title.setColor(Color.BLACK);
+            title.setFontScale(1.5f);
+            title.pack();
+            title.setPosition((width - title.getPrefWidth()) / 2f, height / 2f);
+            title.draw(batch, 1);
+        }
         Label label = new Label("just scored " + score + " on", style);
         label.setColor(Color.BLACK);
         label.setPosition(40, 500);
@@ -101,7 +113,8 @@ public abstract class ShareChallenge {
 
         // Dispose everything
         pixmap.dispose();
-        shareBase.dispose();
+        if (shareBase != null)
+            shareBase.dispose();
         batch.dispose();
         frameBuffer.end();
 

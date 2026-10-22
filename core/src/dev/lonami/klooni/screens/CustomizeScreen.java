@@ -171,6 +171,19 @@ public class CustomizeScreen implements Screen {
         });
         optionsGroup.addActor(issuesButton);
 
+        // Ad consent "Privacy options" (only when required by the user's region)
+        if (adsController != null && adsController.isPrivacyOptionsRequired()) {
+            final SoftButton privacyButton = new SoftButton(0, "ok_texture");
+            privacyButton.addListener(new ChangeListener() {
+                @Override
+                public void changed(ChangeEvent event, Actor actor) {
+                    buyBand.setTempText("privacy options");
+                    adsController.showPrivacyOptions();
+                }
+            });
+            optionsGroup.addActor(privacyButton);
+        }
+
         // Website
 
 

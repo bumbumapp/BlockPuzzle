@@ -27,7 +27,6 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-import org.graalvm.compiler.debug.DebugOptions;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -45,7 +44,6 @@ import dev.lonami.klooni.game.Scorer;
 import dev.lonami.klooni.game.TimeScorer;
 import dev.lonami.klooni.serializer.BinSerializable;
 import dev.lonami.klooni.serializer.BinSerializer;
-import jdk.internal.org.jline.utils.Log;
 
 // Main game screen. Here the board, piece holder and score are shown
 class GameScreen implements Screen, InputProcessor, BinSerializable {
@@ -149,7 +147,7 @@ class GameScreen implements Screen, InputProcessor, BinSerializable {
     }
 
     private void doGameOver(final String gameOverReason) {
-        if (Klooni.TIMER_FINISHED){
+        if (Klooni.TIMER_FINISHED && adsController != null) {
             adsController.showAds();
         }
             if (!gameOverDone) {
@@ -302,7 +300,13 @@ class GameScreen implements Screen, InputProcessor, BinSerializable {
     }
 
     @Override
-    public boolean scrolled(int amount) {
+    public boolean touchCancelled(int screenX, int screenY, int pointer, int button) {
+        // e.g. a system gesture interrupted the drag: release the piece like a normal touch up.
+        return touchUp(screenX, screenY, pointer, button);
+    }
+
+    @Override
+    public boolean scrolled(float amountX, float amountY) {
         return false;
     }
 
