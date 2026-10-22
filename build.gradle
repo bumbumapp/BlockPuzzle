@@ -1,20 +1,10 @@
-buildscript {
-    repositories {
-        mavenLocal()
-        mavenCentral()
-        maven { url "https://plugins.gradle.org/m2/" }
-        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
-        jcenter()
-        google()
-    }
-    dependencies {
-        classpath 'org.wisepersist:gwt-gradle-plugin:1.0.9'
-        // Don't update to avoid breaking the build; noinspection GradleDependency
-        classpath 'com.android.tools.build:gradle:4.0.1'
-        classpath 'com.mobidevelop.robovm:robovm-gradle-plugin:2.3.8'
-        classpath 'com.google.gms:google-services:4.3.10'
-        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.8.1'
-    }
+// Android + core (+ desktop) build. The ios (RoboVM) and html (GWT) modules use Gradle plugins that
+// do not work with Gradle 8, so they are no longer part of the default build; their sources are
+// untouched. See settings.gradle.
+plugins {
+    id 'com.android.application' version '8.13.2' apply false
+    id 'com.google.gms.google-services' version '4.5.0' apply false
+    id 'com.google.firebase.crashlytics' version '3.0.8' apply false
 }
 
 allprojects {
@@ -23,76 +13,17 @@ allprojects {
     version = '0.8.6'
     ext {
         appName = "1010! Klooni"
-        gdxVersion = '1.9.10'
-        roboVMVersion = '2.3.8'
-        box2DLightsVersion = '1.4'
-        ashleyVersion = '1.7.0'
-        aiVersion = '1.8.0'
-    }
-
-    repositories {
-        mavenLocal()
-        mavenCentral()
-        jcenter()
-        google()
-        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
-        maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+        gdxVersion = '1.14.2'
     }
 }
 
 project(":desktop") {
     apply plugin: "java-library"
 
-
     dependencies {
         implementation project(":core")
         api "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
-    }
-}
-
-project(":android") {
-    apply plugin: "android"
-
-    configurations { natives }
-
-    dependencies {
-        implementation project(":core")
-        api "com.badlogicgames.gdx:gdx-backend-android:$gdxVersion"
-        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi"
-        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi-v7a"
-        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-arm64-v8a"
-        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86"
-        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86_64"
-    }
-}
-
-project(":ios") {
-    apply plugin: "java-library"
-    apply plugin: "robovm"
-
-
-    dependencies {
-        implementation project(":core")
-        api "com.mobidevelop.robovm:robovm-rt:$roboVMVersion"
-        api "com.mobidevelop.robovm:robovm-cocoatouch:$roboVMVersion"
-        api "com.badlogicgames.gdx:gdx-backend-robovm:$gdxVersion"
-        api "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-ios"
-    }
-}
-
-project(":html") {
-    apply plugin: "java-library"
-    apply plugin: "gwt"
-    apply plugin: "war"
-
-    dependencies {
-        implementation project(":core")
-        api "com.badlogicgames.gdx:gdx-backend-gwt:$gdxVersion"
-        api "com.badlogicgames.gdx:gdx:$gdxVersion:sources"
-        api "com.badlogicgames.gdx:gdx-backend-gwt:$gdxVersion:sources"
-
-        
     }
 }
 

@@ -1,57 +1,88 @@
-apply plugin: 'com.google.firebase.crashlytics'
-apply plugin: 'com.google.gms.google-services'
+plugins {
+    id 'com.android.application'
+    id 'com.google.gms.google-services'
+    id 'com.google.firebase.crashlytics'
+}
+
 android {
-    buildToolsVersion "29.0.3"
-    compileSdkVersion 33
+    namespace 'dev.lonami.klooni'
+    compileSdk 36
     sourceSets {
         main {
             manifest.srcFile 'AndroidManifest.xml'
             java.srcDirs = ['src']
             aidl.srcDirs = ['src']
-            renderscript.srcDirs = ['src']
             res.srcDirs = ['res']
             assets.srcDirs = ['assets']
             jniLibs.srcDirs = ['libs']
         }
-
+        test {
+            java.srcDirs = ['test']
+        }
     }
     packagingOptions {
-        exclude 'META-INF/robovm/ios/robovm.xml'
+        resources {
+            excludes += ['META-INF/robovm/ios/robovm.xml']
+        }
+        jniLibs {
+            // Store .so files uncompressed and page aligned (16 KB page size devices).
+            useLegacyPackaging = false
+        }
     }
     defaultConfig {
         applicationId "com.bumbumapps.blockpuzzlepro"
-        //noinspection MinSdkTooLow
-        minSdkVersion 21
-        targetSdkVersion 33
-        versionCode 6
-        versionName "1.2.3"
+        minSdk 24
+        targetSdk 36
+        versionCode 8
+        versionName "1.3.0"
+    }
+    buildFeatures {
+        buildConfig true
     }
     buildTypes {
+        debug {
+            // Google test ads in debug builds.
+            manifestPlaceholders = [admobAppId: "ca-app-pub-3940256099942544~3347511713"]
+            resValue "string", "admob_interstitial_id", "ca-app-pub-3940256099942544/1033173712"
+        }
         release {
+            manifestPlaceholders = [admobAppId: "ca-app-pub-8444865753152507~4403739662"]
+            resValue "string", "admob_interstitial_id", "ca-app-pub-8444865753152507/5907311453"
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
-
+    lint {
+        abortOnError false
+    }
 }
 
-dependencies{
-    implementation 'com.google.android.gms:play-services-ads:20.5.0'
-    implementation platform('com.google.firebase:firebase-bom:26.1.0')
-    // Declare the dependencies for the Crashlytics and Analytics libraries
-    // When using the BoM, you don't specify versions in Firebase library dependencies
+configurations { natives }
+
+dependencies {
+    implementation project(":core")
+    implementation "com.badlogicgames.gdx:gdx-backend-android:$gdxVersion"
+    natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi-v7a"
+    natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-arm64-v8a"
+    natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86"
+    natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86_64"
+    implementation 'androidx.core:core:1.17.0'
+    implementation 'com.google.android.gms:play-services-ads:25.5.0'
+    implementation 'com.google.android.ump:user-messaging-platform:4.0.0'
+    implementation platform('com.google.firebase:firebase-bom:35.1.0')
     implementation 'com.google.firebase:firebase-crashlytics'
+    testImplementation 'junit:junit:4.13.2'
 }
+
 // called every time gradle gets executed, takes the native dependencies of
 // the natives configuration, and extracts them to the proper libs/ folders
 // so they get packed with the APK.
-task copyAndroidNatives {
+tasks.register('copyAndroidNatives') {
     doFirst {
-        file("libs/armeabi/").mkdirs()
         file("libs/armeabi-v7a/").mkdirs()
         file("libs/arm64-v8a/").mkdirs()
         file("libs/x86_64/").mkdirs()
@@ -61,7 +92,6 @@ task copyAndroidNatives {
             def outputDir = null
             if (jar.name.endsWith("natives-arm64-v8a.jar")) outputDir = file("libs/arm64-v8a")
             if (jar.name.endsWith("natives-armeabi-v7a.jar")) outputDir = file("libs/armeabi-v7a")
-            if (jar.name.endsWith("natives-armeabi.jar")) outputDir = file("libs/armeabi")
             if (jar.name.endsWith("natives-x86_64.jar")) outputDir = file("libs/x86_64")
             if (jar.name.endsWith("natives-x86.jar")) outputDir = file("libs/x86")
             if (outputDir != null) {
@@ -75,13 +105,11 @@ task copyAndroidNatives {
     }
 }
 
-tasks.whenTaskAdded { packageTask ->
-    if (packageTask.name.contains("package")) {
-        packageTask.dependsOn 'copyAndroidNatives'
-    }
+tasks.matching { it.name.contains("merge") && it.name.contains("JniLibFolders") || it.name.contains("package") }.configureEach {
+    it.dependsOn 'copyAndroidNatives'
 }
 
-task run(type: Exec) {
+tasks.register('run', Exec) {
     def path
     def localProperties = project.file("../local.properties")
     if (localProperties.exists()) {
@@ -100,7 +128,7 @@ task run(type: Exec) {
     }
 
     def adb = path + "/platform-tools/adb"
-    commandLine "$adb", 'shell', 'am', 'start', '-n', 'dev.lonami.klooni/dev.lonami.klooni.AndroidLauncher'
+    commandLine "$adb", 'shell', 'am', 'start', '-n', 'com.bumbumapps.blockpuzzlepro/dev.lonami.klooni.AndroidLauncher'
 }
 
 eclipse.project.name = appName + "-android"
