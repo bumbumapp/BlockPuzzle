@@ -41,6 +41,11 @@ public class SoftButton extends ImageButton {
 
         this.styleIndex = styleIndex;
         updateImage(imageName);
+        // Give layout the real size up front: draw() sets the image too, but tables measure earlier,
+        // which used to give rows only the 9-patch height and cut buttons in half.
+        ImageButtonStyle style = new ImageButtonStyle(getStyle());
+        style.imageUp = image;
+        setStyle(style);
     }
 
     //endregion
@@ -59,6 +64,8 @@ public class SoftButton extends ImageButton {
         // the customize menu), so make sure to update it always.
         ImageButtonStyle style = getStyle();
         Klooni.theme.updateStyle(style, styleIndex);
+        style.up = Klooni.theme.getStyle(styleIndex).up;
+        style.down = Klooni.theme.getStyle(styleIndex).down;
         style.imageUp = image;
 
         getImage().setColor(Klooni.theme.foreground);

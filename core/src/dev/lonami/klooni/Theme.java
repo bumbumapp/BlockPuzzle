@@ -158,7 +158,8 @@ public class Theme {
         highScore = new Color((int) Long.parseLong(colors.getString("high_score"), 16));
         bonus = new Color((int) Long.parseLong(colors.getString("bonus"), 16));
         bandColor = new Color((int) Long.parseLong(colors.getString("band"), 16));
-        bandColor2 = new Color((int) Long.parseLong(colors.getString("band2"), 16));
+        // Most bundled themes have no "band2"; fall back to "band" instead of crashing the theme shop.
+        bandColor2 = new Color((int) Long.parseLong(colors.getString("band2", colors.getString("band")), 16));
         textColor = new Color((int) Long.parseLong(colors.getString("text"), 16));
 
         emptyCell = new Color((int) Long.parseLong(colors.getString("empty_cell"), 16));

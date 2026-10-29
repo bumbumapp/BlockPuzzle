@@ -2,26 +2,32 @@
     "name": "Default",
     "price": 0,
     "colors": {
-        "background": "221f35",
+        "background": "F3F4F8ff",
         "foreground": "ffffffff",
         "buttons": [
-            "FFC107ff",
-            "221f35ff"
-            "980335ff",
-            "360888ff"
+            "5B3CC4ff",
+            "0E1222ff",
+            "0B7285ff",
+            "C2551Aff"
         ],
-        "empty_cell": "C5C0C0ff",
+        "empty_cell": "E2E5EDff",
         "cells": [
-            "7988bfff", "98dc53ff", "5abee2ff",
-            "fec63dff", "ec9548ff", "e66a82ff", "da6554ff",
-            "57cb84ff", "C86C4Fff"
+            "7988bfff",
+            "98dc53ff",
+            "5abee2ff",
+            "fec63dff",
+            "ec9548ff",
+            "e66a82ff",
+            "da6554ff",
+            "57cb84ff",
+            "C86C4Fff"
         ],
-        "current_score": "ffcc00ff",
-        "high_score": "65d681ff",
-        "bonus": "fffffff",
-        "band": "373553ff",
-        "band2": "373553",
-        "text": "ffffffff"
+        "current_score": "5B3CC4ff",
+        "high_score": "0B7285ff",
+        "bonus": "0E1222ff",
+        "band": "FFFFFFff",
+        "band2": "FFFFFFff",
+        "text": "0E1222ff"
     },
     "cell_texture": "basic.png"
 }

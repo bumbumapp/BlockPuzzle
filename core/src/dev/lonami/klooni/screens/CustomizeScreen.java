@@ -188,8 +188,9 @@ public class CustomizeScreen implements Screen {
 
 
         // Use the same height as the buttons (for instance, the back button)
+        // Horizontal scroll row, kept below the display cutout.
         table.add(new ScrollPane(optionsGroup))
-                .pad(20, 4, 12, 4).height(backButton.getHeight());
+                .pad(20 + Gdx.graphics.getSafeInsetTop(), 4, 12, 4).height(backButton.getPrefHeight());
 
         buyBand = new MoneyBuyBand(game);
         table.row();

@@ -69,8 +69,8 @@ public class SkinLoader {
         }
 
         folder = "font/x" + bestMultiplier + "/";
-        skin.add("font", new BitmapFont(Gdx.files.internal(folder + "geosans-light64.fnt")));
-        skin.add("font_small", new BitmapFont(Gdx.files.internal(folder + "geosans-light32.fnt")));
+        skin.add("font", new BitmapFont(Gdx.files.internal(folder + "jakarta-big.fnt")));
+        skin.add("font_small", new BitmapFont(Gdx.files.internal(folder + "jakarta-small.fnt")));
         skin.add("font_bonus", new BitmapFont(Gdx.files.internal(folder + "the-next-font.fnt")));
 
         return skin;

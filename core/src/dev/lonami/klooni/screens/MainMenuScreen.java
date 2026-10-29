@@ -23,8 +23,11 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 
 import dev.lonami.klooni.AdsController;
@@ -58,6 +61,19 @@ public class MainMenuScreen extends InputListener implements Screen {
         Table table = new Table();
         table.setFillParent(true);
         stage.addActor(table);
+
+        // Bento header: big title and the best scores, in the theme's text colour.
+        final Label.LabelStyle titleStyle = new Label.LabelStyle(game.skin.getFont("font"), Klooni.theme.textColor);
+        final Label.LabelStyle smallStyle = new Label.LabelStyle(game.skin.getFont("font_small"),
+                new Color(Klooni.theme.textColor).mul(1f, 1f, 1f, 0.62f));
+        final Label title = new Label("Block Puzzle", titleStyle);
+        table.add(title).colspan(2).left().padBottom(8);
+        table.row();
+        final Label best = new Label("Best " + Klooni.getMaxScore() + "   ·   Time " + Klooni.getMaxTimeScore(), smallStyle);
+        best.setAlignment(Align.left);
+        best.setFontScale(0.8f);
+        table.add(best).colspan(2).left().padBottom(40);
+        table.row();
 
         // Play button
         final SoftButton playButton = new SoftButton(
@@ -97,6 +113,15 @@ public class MainMenuScreen extends InputListener implements Screen {
             }
         });
         table.add(paletteButton).space(32);
+
+        // Labels under the two small tiles.
+        table.row();
+        final Label timeLabel = new Label("Time mode", smallStyle);
+        final Label themesLabel = new Label("Themes", smallStyle);
+        timeLabel.setFontScale(0.7f);
+        themesLabel.setFontScale(0.7f);
+        table.add(timeLabel).padTop(-16);
+        table.add(themesLabel).padTop(-16);
     }
 
     //endregion
