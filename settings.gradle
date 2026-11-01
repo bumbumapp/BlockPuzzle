@@ -9,6 +9,7 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven { url 'https://developer.huawei.com/repo/' }
     }
 }
 // ios (RoboVM) and html (GWT) are left as-is but excluded: their Gradle plugins are incompatible

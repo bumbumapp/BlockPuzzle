@@ -4,6 +4,15 @@ plugins {
     id 'com.google.firebase.crashlytics'
 }
 
+// Huawei Ads (Petal) slot ID for the AppGallery build: -PHMS_INTERSTITIAL_ID=... or ads.properties.
+// Until the real slots are set the hms build falls back to Huawei's public test slots.
+def hmsAdsProps = new Properties()
+def hmsAdsPropsFile = rootProject.file('ads.properties')
+if (hmsAdsPropsFile.exists()) hmsAdsPropsFile.withInputStream { hmsAdsProps.load(it) }
+def hmsAdId = { String key, String fallback -> ((project.findProperty(key) ?: hmsAdsProps.getProperty(key)) ?: fallback).toString() }
+def HMS_TEST_INTERSTITIAL_ID = 'testb4znbuh3n2'
+def HMS_INTERSTITIAL_ID = hmsAdId('HMS_INTERSTITIAL_ID', HMS_TEST_INTERSTITIAL_ID)
+
 android {
     namespace 'dev.lonami.klooni'
     compileSdk 36
@@ -18,6 +27,14 @@ android {
         }
         test {
             java.srcDirs = ['test']
+        }
+        // Store flavors live outside 'src' (the main java root) so they are not compiled into main.
+        play {
+            manifest.srcFile 'flavors/play/AndroidManifest.xml'
+            java.srcDirs = ['flavors/play/java']
+        }
+        hms {
+            java.srcDirs = ['flavors/hms/java']
         }
     }
     packagingOptions {
@@ -39,6 +56,19 @@ android {
     buildFeatures {
         buildConfig true
     }
+    // play = Google Play (AdMob + UMP), hms = Huawei AppGallery (Huawei Ads, no Google Mobile Services).
+    flavorDimensions = ['store']
+    productFlavors {
+        play {
+            dimension 'store'
+        }
+        hms {
+            dimension 'store'
+            resValue 'string', 'hms_interstitial_id', HMS_INTERSTITIAL_ID
+            resValue 'string', 'hms_test_interstitial_id', HMS_TEST_INTERSTITIAL_ID
+        }
+    }
+
     buildTypes {
         debug {
             // Google test ads in debug builds.
@@ -71,10 +101,11 @@ dependencies {
     natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86"
     natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86_64"
     implementation 'androidx.core:core:1.17.0'
-    implementation 'com.google.android.gms:play-services-ads:25.5.0'
+    playImplementation 'com.google.android.gms:play-services-ads:25.5.0'
     // Play SDK index: play-services-base pulls androidx.fragment 1.1.0 (flagged outdated); force current.
     implementation 'androidx.fragment:fragment:1.8.9'
-    implementation 'com.google.android.ump:user-messaging-platform:4.0.0'
+    playImplementation 'com.google.android.ump:user-messaging-platform:4.0.0'
+    hmsImplementation 'com.huawei.hms:ads-lite:13.4.91.301'
     implementation platform('com.google.firebase:firebase-bom:35.1.0')
     implementation 'com.google.firebase:firebase-crashlytics'
     testImplementation 'junit:junit:4.13.2'
